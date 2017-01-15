@@ -1,0 +1,242 @@
+<!doctype html/>
+<html>
+	<head>
+		<title>Engineering Technical Test 2 (Cart)</title>
+		<style>
+			div.main{
+				width: 70%;
+				margin-left: 15%;
+				margin-right: 15%;
+				background-color: orange;
+				color: white;
+				padding-bottom: 15px;
+			}
+			.header{
+				text-align: center;
+			}
+			table{
+				border-collapse: collapse;
+				width: 90%;
+				margin-left: 5%;
+			}
+			.pn, .pr{
+				width:45%;
+			}
+			.action{
+				width: 10%;
+			}
+			.ia, .eci{
+				width: 40%;
+			}
+			.ect{
+				width: 20%;
+			}
+			tr, th, td{
+				border: 1px solid white;
+			}
+			.pc{
+				text-align: right;
+			}
+			th, td{
+				vertical-align: top;
+			}
+			tr.mycart div{
+				float: left;
+				width: 100%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class = "main">
+			<h3 class = "header">Catalogue</h3>
+			<table>
+				<tr>
+					<th class = "pn">Items Added</th>
+					<th class = "pr">Expected Cart Total</th>
+					<th class = "action">Expected Cart Items</th>
+				</tr>
+				<tr>
+					<td class = "pn">Unlimited 1GB</td>
+					<td class = "pr">$24.90</td>
+					<td class = "action"><a href = "#" onclick = "add_1_GB(24.90);">Add to Cart</a></td>
+				</tr>
+				<tr>
+					<td class = "pn">Unlimited 2GB</td>
+					<td class = "pr">$29.90</td>
+					<td class = "action"><a href = "#" onclick = "add_2_GB(29.90);">Add to Cart</a></td>
+				</tr>
+				<tr>
+					<td class = "pn">Unlimited 5GB</td>
+					<td class = "pr">$44.90</td>
+					<td class = "action"><a href = "#" onclick = "add_5_GB(44.90);">Add to Cart</a></td>
+				</tr>
+				<tr>
+					<td class = "pn">1 GB Data-pack</td>
+					<td class = "pr">$9.90</td>
+					<td class = "action"><a href = "#" onclick = "add_data_pack(9.90);">Add to Cart</a></td>
+				</tr>
+				<tr>
+					<td class = "pc" colspan = 3><a href = "#" onclick = "use_promo(10);">Use 'I<3AMAYSIM' promo</a></td>
+				</tr>
+				<tr>
+					<td class = "header" colspan = 3><a href = "#" onclick = "reset();">Reset</a></td>
+				</tr>
+			</table>
+			<hr/>
+			<h3 class = "header">Cart</h3>
+			<table>
+				<tr>
+					<th class = "ia">Items Added</th>
+					<th class = "ect">Expected Cart Total</th>
+					<th class = "eci">Expected Cart Items</th>
+				</tr>
+				<tr class = "mycart">
+					<td class = "ia" id = "added">&nbsp;</td>
+					<td class = "ect" id = "cart_total">&nbsp;</td>
+					<td class = "eci" id = "cart_items">&nbsp;</td>
+				</tr>
+			</table>
+		</div>
+	</body>
+</html>
+<script>
+	var ult_small_cnt = 0;
+	var ult_medium_cnt = 0;
+	var ult_large_cnt = 0;
+	var data_pack_cnt = 0;
+	var total_price = 0.00;
+	var discount_used = false;
+	
+	var added = document.getElementById("added");
+	var cart_total = document.getElementById("cart_total");
+	var cart_items = document.getElementById("cart_items");
+	
+	function reset(){
+		ult_small_cnt = 0;
+		ult_medium_cnt = 0;
+		ult_large_cnt = 0;
+		data_pack_cnt = 0;
+		total_price = 0.00;
+		discount_used = false;
+		
+		added.innerHTML = "&nbsp;";
+		cart_total.innerHTML = "&nbsp;";
+		cart_items.innerHTML = "&nbsp;";
+	}
+	function add_1_GB(price){
+		ult_small_cnt += 1;
+		if(ult_small_cnt % 3 != 0){
+			total_price += price;
+		}
+		
+		fill_cart();
+	}
+	function add_2_GB(price){
+		ult_medium_cnt += 1;
+		data_pack_cnt += 1;
+		total_price += price;
+		fill_cart();
+	}
+	function add_5_GB(price){
+		var bundle_deduction = 0;
+		ult_large_cnt += 1;
+		if(ult_large_cnt > 3){
+			bundle_deduction = (price - 39.90) * 3;
+			price = 39.90;
+		}
+		total_price += price;
+		total_price -= bundle_deduction;
+		fill_cart();
+	}
+	function add_data_pack(price){
+		data_pack_cnt += 1;
+		total_price += price;
+		fill_cart();
+	}
+	function use_promo(discount){
+		/*if(ult_small_cnt == 0 && ult_medium_cnt == 0 && ult_large_cnt == 0 && data_pack_cnt == 0){
+			alert("Can't apply promo at the moment, please select this after you choose your desired promo.");
+		}else{
+			if(!discount_used){
+				discount_used = true;
+				added.innerHTML = added.innerHTML + "<div id = 'promo'>'I<3AMAYSIM' Promo Applied</div>";
+				total_price = total_price * 0.9;
+				fill_cart();
+			}
+		}*/
+		if(!discount_used){
+			discount_used = true;
+			fill_cart();
+		}
+	}
+	function fill_cart(){
+		if(ult_small_cnt > 0){
+			added.innerHTML = ult_small_cnt + " x Unlimited 1 GB";
+			cart_items.innerHTML = "<div id = 'small'>" + ult_small_cnt + " x Unlimited 1 GB</div>";
+		}
+		if(ult_medium_cnt > 0){
+			if(added.innerHTML == "" || added.innerHTML == null || added.innerHTML == "&nbsp;"){
+				added.innerHTML = "<div id = 'medium'>" + ult_medium_cnt + " x Unlimited 2 GB</div>";
+				cart_items.innerHTML = "<div id = 'medium'>" + ult_medium_cnt + " x Unlimited 2 GB</div>";
+			}else{
+				if(ult_small_cnt == 0){
+					added.innerHTML = "<div id = 'medium'>" + ult_medium_cnt + " x Unlimited 2 GB</div>";
+					cart_items.innerHTML = "<div id = 'medium'>" + ult_medium_cnt + " x Unlimited 2 GB</div>";
+				}else{
+					added.innerHTML = added.innerHTML + "<div id = 'medium'>" + ult_medium_cnt + " x Unlimited 2 GB</div>";
+					cart_items.innerHTML = cart_items.innerHTML + "<div id = 'medium'>" + ult_medium_cnt + " x Unlimited 2 GB</div>";
+				}
+			}
+			add_free_data_pack(ult_medium_cnt);
+		}
+		if(ult_large_cnt > 0){
+			if(added.innerHTML == "" || added.innerHTML == null || added.innerHTML == "&nbsp;"){
+				added.innerHTML = "<div id = 'large'>" + ult_large_cnt + " x Unlimited 5 GB</div>";
+				cart_items.innerHTML = "<div id = 'large'>" + ult_large_cnt + " x Unlimited 5 GB</div>";
+			}else{
+				if(ult_small_cnt == 0 && ult_medium_cnt == 0){
+					added.innerHTML = "<div id = 'large'>" + ult_large_cnt + " x Unlimited 5 GB</div>";
+					cart_items.innerHTML = "<div id = 'large'>" + ult_large_cnt + " x Unlimited 5 GB</div>";
+				}else{
+					added.innerHTML = added.innerHTML + "<div id = 'large'>" + ult_large_cnt + " x Unlimited 5 GB</div>";
+					cart_items.innerHTML = cart_items.innerHTML + "<div id = 'large'>" + ult_large_cnt + " x Unlimited 5 GB</div>";
+				}
+			}
+		}
+		if((data_pack_cnt - ult_medium_cnt) > 0){
+			var data_pack = document.getElementById("data_pack");
+			if(added.innerHTML == "" || added.innerHTML == null || added.innerHTML == "&nbsp;"){
+				added.innerHTML = "<div id = 'data_pack'>" + (data_pack_cnt - ult_medium_cnt) + " x 1 GB Data-pack</div>";
+				cart_items.innerHTML = "<div id = 'data_pack'>" + data_pack_cnt + " x 1 GB Data-pack</div>";
+			}else{
+				if(ult_small_cnt == 0 && ult_medium_cnt == 0 && ult_large_cnt == 0){
+					added.innerHTML = "<div id = 'data_pack'>" + (data_pack_cnt - ult_medium_cnt) + " x 1 GB Data-pack</div>";
+					cart_items.innerHTML = "<div id = 'data_pack'>" + data_pack_cnt + " x 1 GB Data-pack</div>";
+				}else{
+					added.innerHTML = added.innerHTML + "<br/>" + "<div id = 'data_pack'>" + (data_pack_cnt - ult_medium_cnt) + " x 1 GB Data-pack</div>";
+					if(data_pack != "" && data_pack != null){
+						data_pack.innerHTML = data_pack_cnt + " x 1 GB Data-pack";
+					}else{
+						cart_items.innerHTML = cart_items.innerHTML + "<br/>" +  "<div id = 'data_pack'>" + data_pack_cnt + " x 1 GB Data-pack</div>";
+					}
+				}
+			}
+			if(data_pack != "" && data_pack != null){
+				data_pack.innerHTML = data_pack_cnt + " x 1 GB Data-pack";
+			}
+		}
+		if(discount_used){
+			cart_total.innerHTML = "$" + (total_price * 0.9).toFixed(2);
+			if(added.innerHTML == "" || added.innerHTML == null || added.innerHTML == "&nbsp;"){
+				added.innerHTML = "<div id = 'promo'>'I<3AMAYSIM' Promo Applied</div>";
+			}else{
+				added.innerHTML = added.innerHTML + "<div id = 'promo'>'I<3AMAYSIM' Promo Applied</div>";
+			}
+		}else{
+			cart_total.innerHTML = "$" + total_price.toFixed(2);
+		}
+	}
+	function add_free_data_pack(count){
+		cart_items.innerHTML = cart_items.innerHTML + "<div id = 'data_pack'>" + count + " x 1 GB Data-pack</div>";
+	}
+</script>
